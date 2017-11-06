@@ -15,10 +15,12 @@ type
     ButtonExtract: TButton;
     ComboBoxLanguage: TComboBox;
     CheckBoxCamelCase: TCheckBox;
+    CheckBoxPrivate: TCheckBox;
     Splitter1: TSplitter;
     procedure ButtonExtractClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     { Private declarations }
     FList1: TStringList;
@@ -76,6 +78,11 @@ begin
   FList2.Free;
 end;
 
+procedure TFormLayoutXMLControlExtractorMain.FormResize(Sender: TObject);
+begin
+  MemoLayoutXML.Width := Width div 2;
+end;
+
 procedure TFormLayoutXMLControlExtractorMain.ProcessNode(const AXMLNode: IXMLNode);
   function GetId(const AXMLNodeList: IXMLNodeList): string;
   var
@@ -113,6 +120,14 @@ procedure TFormLayoutXMLControlExtractorMain.ProcessNode(const AXMLNode: IXMLNod
     FirstChar := UpperCase( Copy( AName, 1, 1 ) );
     Result := 'm' + FirstChar + Copy( AName, 2, Length(AName) - 1 );
   end;
+
+  function GetPrivateStr: string;
+  begin
+    Result := '';
+
+    if CheckBoxPrivate.Checked then
+      Result := 'private ';
+  end;
 var
   Id: string;
   Line1, Line2: string;
@@ -138,15 +153,14 @@ begin
   else
     ControlName := CuttedName;
 
-
   Line1 := '';
   Line2 := '';
   case ComboBoxLanguage.ItemIndex of
-    0: Line1 := Format( 'private val %s = findViewById(R.id.%s) as %s', [ControlName, CuttedName, TypeName] );
-    1: LIne1 := Format( 'private val %s: %s by bind(R.id.%s)', [ControlName, TypeName, CuttedName] );
+    0: Line1 := Format( '%sval %s = findViewById(R.id.%s) as %s', [GetPrivateStr, ControlName, CuttedName, TypeName] );
+    1: LIne1 := Format( '%sval %s: %s by bind(R.id.%s)', [GetPrivateStr, ControlName, TypeName, CuttedName] );
     2:
     begin
-      Line1 := Format( 'private %s %s;', [TypeName, ControlName] );
+      Line1 := Format( '%s%s %s;', [GetPrivateStr, TypeName, ControlName] );
       Line2 := Format( '%s = (%s) findViewById(R.id.%s);', [ControlName, TypeName, CuttedName] );
     end;
   end;
