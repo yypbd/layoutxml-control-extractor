@@ -14,7 +14,7 @@ begin
 
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.Title := 'LayoutXML Control Extractor v1.0';
+  Application.Title := 'LayoutXML Control Extractor v1.1';
   Application.CreateForm(TFormLayoutXMLControlExtractorMain, FormLayoutXMLControlExtractorMain);
   Application.Run;
 end.

@@ -9,18 +9,30 @@ uses
 
 type
   TFormLayoutXMLControlExtractorMain = class(TForm)
-    MemoLayoutXML: TMemo;
-    MemoOutput: TMemo;
     PanelTop: TPanel;
     ButtonExtract: TButton;
     ComboBoxLanguage: TComboBox;
     CheckBoxCamelCase: TCheckBox;
     CheckBoxPrivate: TCheckBox;
     Splitter1: TSplitter;
+    PanelLeft: TPanel;
+    MemoLayoutXML: TMemo;
+    PanelClient: TPanel;
+    MemoOutput: TMemo;
+    PanelLeftTop: TPanel;
+    PanelClientTop: TPanel;
+    ButtonXMLClear: TButton;
+    ButtonCodeClear: TButton;
+    ButtonXMLPasteFromClipBoard: TButton;
+    ButtonCodeCopyToClipBoard: TButton;
     procedure ButtonExtractClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure ButtonXMLClearClick(Sender: TObject);
+    procedure ButtonCodeClearClick(Sender: TObject);
+    procedure ButtonXMLPasteFromClipBoardClick(Sender: TObject);
+    procedure ButtonCodeCopyToClipBoardClick(Sender: TObject);
   private
     { Private declarations }
     FList1: TStringList;
@@ -37,13 +49,41 @@ var
 
 implementation
 
+uses
+  CLipbrd;
+
 
 {$R *.dfm}
+
+procedure TFormLayoutXMLControlExtractorMain.ButtonCodeClearClick(
+  Sender: TObject);
+begin
+  MemoOutput.Clear;
+end;
+
+procedure TFormLayoutXMLControlExtractorMain.ButtonCodeCopyToClipBoardClick(
+  Sender: TObject);
+begin
+  if MemoOutput.Lines.Text = '' then
+  begin
+    ShowMessage( 'Code is empty.' );
+    Exit;
+  end;
+
+  Clipboard.AsText := Trim(MemoOutput.Lines.Text);
+end;
 
 procedure TFormLayoutXMLControlExtractorMain.ButtonExtractClick(Sender: TObject);
 var
   XML: TXMLDocument;
 begin
+  if Trim(MemoLayoutXML.Lines.Text) = '' then
+  begin
+    ShowMessage( 'Input Layout XML first.' );
+    Exit;
+  end;
+
+
   XML := TXMLDocument.Create( Application );
   try
     MemoOutput.Clear;
@@ -64,6 +104,21 @@ begin
   end;
 end;
 
+procedure TFormLayoutXMLControlExtractorMain.ButtonXMLClearClick(
+  Sender: TObject);
+begin
+  MemoLayoutXML.Clear;
+end;
+
+procedure TFormLayoutXMLControlExtractorMain.ButtonXMLPasteFromClipBoardClick(
+  Sender: TObject);
+begin
+  try
+    MemoLayoutXML.Text := Clipboard.AsText;
+  except
+  end;
+end;
+
 procedure TFormLayoutXMLControlExtractorMain.FormCreate(Sender: TObject);
 begin
   Caption := Application.Title;
@@ -80,7 +135,7 @@ end;
 
 procedure TFormLayoutXMLControlExtractorMain.FormResize(Sender: TObject);
 begin
-  MemoLayoutXML.Width := Width div 2;
+  PanelLeft.Width := Width div 2;
 end;
 
 procedure TFormLayoutXMLControlExtractorMain.ProcessNode(const AXMLNode: IXMLNode);
