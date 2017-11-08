@@ -1,7 +1,6 @@
 # LayoutXML Control Extractor
 
-
-A tool for extracting control IDs and writing findByViewId code tools.
+Tools for extracting control IDs from Android Layout XML and writing findByViewId code.
 
 It creates a Kotlin, Kotlin(BindExt), Java code by Android Layout XML.
 
@@ -60,8 +59,14 @@ private val mImageButton: ImageButton by bind(R.id.imageButton)
 
 ## History
 
+### v1.1
+
+Added clipboard function
+
+
 ### v1.0
 
+Implemented basic functionality
 
 ## License
 
